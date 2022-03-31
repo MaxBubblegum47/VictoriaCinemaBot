@@ -9,13 +9,8 @@ from os import times_result
 import requests
 import re
 import config # for storing bot token
-
-url = "https://www.victoriacinema.it/victoria_cinema/index.php"
-body = requests.get(url)
-body_text = body.content
-
 from bs4 import BeautifulSoup
-soup = BeautifulSoup(body_text, 'lxml')
+
 
 class Film:
     def __init__(self, poster, time_slots, reservation):
@@ -27,6 +22,12 @@ TOKEN_BOT = config.bot_token #inser your token here
 updater = Updater(TOKEN_BOT, use_context=True)
     
 def start(update: Update, context: CallbackContext):
+    
+    url = "https://www.victoriacinema.it/victoria_cinema/index.php"
+    body = requests.get(url)
+    body_text = body.content
+    soup = BeautifulSoup(body_text, 'lxml')
+
     update.message.reply_text("Ecco i film di oggi:")
     divsOdd = soup.find_all("div", class_="filmContainer oddFilm")
     messageOdd = ""
