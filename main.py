@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 from telegram.ext.updater import Updater
 from telegram.update import Update
 from telegram.ext.callbackcontext import CallbackContext
@@ -5,7 +6,7 @@ from telegram.ext.commandhandler import CommandHandler
 from telegram.ext.messagehandler import MessageHandler
 from telegram.ext.filters import Filters
 from distutils.command import clean
-from os import times_result
+from os import sep, times_result
 import requests
 import re
 import config # for storing bot token
@@ -36,7 +37,7 @@ def start(update: Update, context: CallbackContext):
         idfilm = div.find_all("div",  class_="scheda")
         idfilm = re.findall(r"\D(\d{5})\D", str(idfilm))
         poster = ""
-        time_slots = ""
+        time_slots = []
         reservation = ""
 
         divs3 = div.find_all("div", class_="datiFilm")
@@ -51,10 +52,10 @@ def start(update: Update, context: CallbackContext):
         divs2 = div.find_all("ul", class_="orari")
         for div2 in divs2:
             for clean_strip in list(div2.stripped_strings):
-                time_slots += " " + clean_strip
-        poster = poster.strip("SCHEDA FILM")
-        f = Film(poster, time_slots, reservation)
-        messageOdd = f.poster + "\nProiezioni:\n" + f.time_slots + "\nLink Prenotazione:\n" + f.reservation +"\n\n\n"
+                time_slots.append(clean_strip)
+
+        f = Film(poster, time_slots, reservation)  
+        messageOdd = f.poster + "\nProiezioni:\n" + "".join(str("\n" + elem + ":\n") if elem.isalpha() else str(elem + "   ") for elem in f.time_slots )+ "\nLink Prenotazione:\n" + f.reservation +"\n\n\n"
         update.message.reply_text(messageOdd)
         
         
@@ -66,7 +67,7 @@ def start(update: Update, context: CallbackContext):
         idfilm = div.find_all("div",  class_="scheda")
         idfilm = re.findall(r"\D(\d{5})\D", str(idfilm))
         poster = ""
-        time_slots = ""
+        time_slots = []
         reservation = ""
 
         divs3 = div.find_all("div", class_="datiFilm")
@@ -81,11 +82,10 @@ def start(update: Update, context: CallbackContext):
         divs2 = div.find_all("ul", class_="orari")
         for div2 in divs2:
             for clean_strip in list(div2.stripped_strings):
-                time_slots += " " + clean_strip
+                time_slots.append(clean_strip)
         
-        poster = poster.replace("SCHEDA FILM", "")
         f = Film(poster, time_slots, reservation)
-        messageEven = f.poster + "\nProiezioni:\n" + f.time_slots + "\nLink Prenotazione:\n" + f.reservation +"\n\n\n"
+        messageOdd = f.poster + "\nProiezioni:\n" + "".join(str("\n" + elem + ":\n") if elem.isalpha() else str(elem + "   ") for elem in f.time_slots )+ "\nLink Prenotazione:\n" + f.reservation +"\n\n\n"
         update.message.reply_text(messageEven)
     
 
