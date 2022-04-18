@@ -20,11 +20,13 @@ updater = Updater(TOKEN_BOT, use_context=True)
 def start(update: Update, context: CallbackContext):
     # stampa solamente il primo film  
     messageOdd = Film.Odd_Movie()
-    update.message.reply_text(messageOdd)
-            
-    # stampa solamente il primo film
     messageEven = Film.Even_Movie()
-    update.message.reply_text(messageEven)
+    
+    for elem in messageOdd:
+        update.message.reply_text(elem)
+    
+    for elem in messageEven:    
+        update.message.reply_text(elem)
     
 
 def unknown(update: Update, context: CallbackContext):
