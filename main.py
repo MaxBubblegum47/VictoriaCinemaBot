@@ -106,5 +106,3 @@ updater.dispatcher.add_handler(MessageHandler(
 updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown_text))
   
 updater.start_polling()
-
-
