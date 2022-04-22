@@ -3,3 +3,5 @@ __pycache__
 test.py
 swp.py
 main_alternative.py
+saveEven.txt
+saveOdd.txt
