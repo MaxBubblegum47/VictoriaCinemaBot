@@ -1,6 +1,9 @@
+from time import time
 from bs4 import BeautifulSoup
 import requests
 import re
+from datetime import datetime
+import pickle
 
 class Film:
     def __init__(self, title, direction, genere, duration, cast, time_slots, reservation, trailer):
@@ -81,6 +84,8 @@ class Film:
             f = Film(title, direction, genere, duration, cast, time_slots, reservation, trailer)
             messageOdd = f.title + "\n" + f.direction + "\n" + f.genere + "\n" + f.duration + "\n" + f.cast + "\n" + "\nProiezioni:" + "".join(str("\n" + elem + ":\n") if elem.isalpha() else str(elem + "   ") for elem in f.time_slots )+ "\n\n\nLink Prenotazione:\n" + f.reservation +"\n\n\nTrailer:" + f.trailer +"\n\n\n"            
             result_list.append(messageOdd)
+            now = datetime.now()
+            print("Movie Odd searched at time: " + str(now))
         return result_list
 
     def Even_Movie():
@@ -162,4 +167,16 @@ class Film:
             f = Film(title, direction, genere, duration, cast, time_slots, reservation, trailer)
             messageEven = f.title + "\n" + f.direction + "\n" + f.genere + "\n" + f.duration + "\n" + f.cast + "\n" + "\nProiezioni:" + "".join(str("\n" + elem + ":\n") if elem.isalpha() else str(elem + "   ") for elem in f.time_slots )+ "\n\n\nLink Prenotazione:\n" + f.reservation +"\n\n\nTrailer:" + f.trailer +"\n\n\n"            
             result_list.append(messageEven)
+            now = datetime.now()
+            print("Movie Even searched at time: " + str(now))
         return result_list
+
+
+messageOdd = Film.Odd_Movie()
+messageEven = Film.Even_Movie()
+
+with open('saveEven.txt', 'wb') as file:
+    pickle.dump(messageEven, file)
+
+with open('saveOdd.txt', 'wb') as file:
+    pickle.dump(messageOdd, file)        
