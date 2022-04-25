@@ -7,10 +7,11 @@ Little Bot that scrapes my local Cinema Website: https://www.victoriacinema.it/v
 * Genere
 
 ## How to make it works?
-##### DISCLAIMER: I need to update the container, at the momento you need to launch bot the container (as follows) and _main.py_ 
+After installing the requirements (I auto generated it with _pipreqs_), you can execute the following line:
 ```bash
 bash container.sh
 ```
+Note that in all the bash scripts I used _python3_ as python command. Make sure that your system has this command available, otherwise the script may not works at all.
 
 ### Screenshots
 ![screenshot_1](https://user-images.githubusercontent.com/59342085/165149574-523d1478-945d-4156-9f17-e4c8f50d6c48.png)
@@ -27,3 +28,6 @@ The first aim to display information to the user every time he presses the butto
 
 ### About the website
 The website is done by https://www.creaweb.it/creaweb/index.php, a company that seems to create website (_php_ based) for movie theaters. The website has got a curious html configurations, in which movies are divided in Even and Odd, so I had two to write similar funcion to catch the _even movies_ and the _odd_ ones. Then I put everything in two differnts list (_even, odd_) and saves everything to file. The bot open the file, read the content and print it to the user. Thanks to this task division, the bot doesn't have to calculate every time for every user all the available movies. This cames quite handy also because I do a lot of operations with string, that may requires sime time (depending on the hardware on whic the bot is working)
+
+##### About messy commits
+I did a wrong commit of something like 4 file at once, but I'm lazy so I don't think I'm gonna fix it for now :(
