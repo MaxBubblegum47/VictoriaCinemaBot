@@ -6,6 +6,10 @@ Little Bot that scrapes my local Cinema Website: https://www.victoriacinema.it/v
 * Direction
 * Genere
 
+### Screenshots
+![screenshot_1](https://user-images.githubusercontent.com/59342085/165149574-523d1478-945d-4156-9f17-e4c8f50d6c48.png)
+![screenshot_2](https://user-images.githubusercontent.com/59342085/165149579-d7c0a80a-714f-4a25-ba7c-e32b699b8a2d.png)
+
 
 ### How it works?
 The bot has two parts:
