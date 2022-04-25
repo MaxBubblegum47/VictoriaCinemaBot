@@ -6,6 +6,17 @@ Little Bot that scrapes my local Cinema Website: https://www.victoriacinema.it/v
 * Direction
 * Genere
 
+## How to make it works?
+##### DISCLAIMER: I need to update the container, at the momento you need to launch bot the container (as follows) and _main.py_ 
+```bash
+bash container.sh
+```
+
+### Screenshots
+![screenshot_1](https://user-images.githubusercontent.com/59342085/165149574-523d1478-945d-4156-9f17-e4c8f50d6c48.png)
+![screenshot_2](https://user-images.githubusercontent.com/59342085/165149579-d7c0a80a-714f-4a25-ba7c-e32b699b8a2d.png)
+
+The only available command at the moment is _start_, that display all the movies that are in the theater. For every movie there's a link trailer and a reservation link. Both the links are taken from the website, but sometimes the trailer one not works properly. That's because can happens that the admin of the website, post a new film without the trailer link (or with a dummy one).
 
 ### How it works?
 The bot has two parts:
