@@ -7,7 +7,11 @@ Little Bot that scrapes my local Cinema Website: https://www.victoriacinema.it/v
 * Genere
 
 ## How to make it works?
-After installing the requirements (I auto generated it with _pipreqs_), you can execute the following line:
+The first thigs to do is to create a file: _config.py_ and adding the following line:
+```python
+bot_token="place your API key here"
+```
+Then, after installing the requirements (I auto generated it with _pipreqs_), you can execute the following line:
 ```bash
 bash container.sh
 ```
