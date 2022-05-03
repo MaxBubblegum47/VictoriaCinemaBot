@@ -94,10 +94,10 @@ def help(update: Update, context: CallbackContext):
 
 
 def unknown(update: Update, context: CallbackContext):
-    update.message.reply_text("Sorry '%s' is not a valid command" % update.message.text)
+    update.message.reply_text("'%s' non e' un comando valido. Se vuoi vedere i film disponibili in sala digita /film, se vuoi avere informazioni o prezzi digita rispettivamente: /info oppure /prezzi" % update.message.text)
   
 def unknown_text(update: Update, context: CallbackContext):
-    update.message.reply_text("Sorry I can't recognize you , you said '%s'" % update.message.text)  
+    update.message.reply_text("'%s' non e' un comando valido. Se vuoi vedere i film disponibili in sala digita /film, se vuoi avere informazioni o prezzi digita rispettivamente: /info oppure /prezzi" % update.message.text)  
 
 def main():
     # Create the Updater and pass it your bot's token.
@@ -107,6 +107,7 @@ def main():
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("film", start))
     dp.add_handler(CommandHandler("prezzi", price))
     dp.add_handler(CommandHandler("price", price))
     dp.add_handler(CommandHandler("info", info))
