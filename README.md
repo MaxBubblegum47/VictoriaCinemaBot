@@ -18,6 +18,11 @@ bash container.sh
 ```
 Note that in all the bash scripts I used _python3_ as python command. Make sure that your system has this command available, otherwise the script may not works at all.
 
+### Available Commands
+* film/start: display all the film that are available on https://www.victoriacinema.it/victoria_cinema/index.php
+* prezzi/price: shows movie's ticket price
+* info: show all other information related with the movie theater
+
 ### Screenshots
 ![screenshot_1](https://user-images.githubusercontent.com/59342085/165149574-523d1478-945d-4156-9f17-e4c8f50d6c48.png)
 ![screenshot_2](https://user-images.githubusercontent.com/59342085/165149579-d7c0a80a-714f-4a25-ba7c-e32b699b8a2d.png)
