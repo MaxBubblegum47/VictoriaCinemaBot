@@ -172,11 +172,17 @@ class Film:
         return result_list
 
 
-messageOdd = Film.Odd_Movie()
-messageEven = Film.Even_Movie()
 
-with open('saveEven.txt', 'wb') as file:
-    pickle.dump(messageEven, file)
+def main():
+    messageOdd = Film.Odd_Movie()
+    messageEven = Film.Even_Movie()
 
-with open('saveOdd.txt', 'wb') as file:
-    pickle.dump(messageOdd, file)        
+    with open('saveEven.txt', 'wb') as file:
+        pickle.dump(messageEven, file)
+
+    with open('saveOdd.txt', 'wb') as file:
+        pickle.dump(messageOdd, file)        
+
+
+if __name__ == "__main__":
+    main()
