@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python3 Victoria_Cinema/Movie.py
+python3 victoria_cinema/movie.py
