@@ -45,3 +45,5 @@ info_text = (
         "Si informa la gentile clientela che i film inizieranno circa 10/15 minuti dopo l'orario indicato.\n"
         "La programmazione potrebbe subire variazioni indipendenti dalla Direzione.\n"
     )
+
+greetings_text = "Benvenuto nel bot di telegram dedicato al cinema victoria di Modena"
