@@ -3,7 +3,7 @@ from tkinter import ttk
 import sqlite3
 from tkinter import *
 import Pyro4
-    
+import csv
 
 def show_all():
     listBox.delete(*listBox.get_children())
@@ -13,8 +13,6 @@ def show_all():
 
 def show_info():
     curItem = listBox.focus()
-    print(listBox.item(curItem))
-
     newWindow = Toplevel(scores)
      
     # sets the title of the
@@ -43,6 +41,23 @@ def choose_day():
 
 def db_update():
     greeting_maker.db_update()
+
+
+
+# this function creates a file that dumps the db
+def dump_treeview():
+    greeting_maker.db_dump()
+
+def login_register():
+    print("sono dentro login register")
+    print(T1.get("1.0", "end"), T2.get("1.0", "end"), T3.get("1.0", "end"))
+
+    greeting_maker.user_login_or_registration(T1.get("1.0", "end"), T2.get("1.0", "end"), T3.get("1.0", "end"))    
+
+def print_all_user():
+    greeting_maker.user_print_all()
+
+    
 
 # main
 # connecting to the server
@@ -99,6 +114,24 @@ label = Label( scores , text = "" )
 for col in cols:
     listBox.heading(col, text=col)    
 
+# bottoni per login
+T1 = Text(scores, height = 5, width = 52)
+l1 = Label(scores, text = "username")
+l1.config(font =("Arial",25))
+T2 = Text(scores, height = 5, width = 52)
+l2 = Label(scores, text = "password")
+l2.config(font =("Arial",25))
+T3 = Text(scores, height = 5, width = 52)
+l3 = Label(scores, text = "favourite lists")
+l3.config(font =("Arial",25))
+T1.pack()
+T2.pack()
+T3.pack()
+
+l1.pack()
+l2.pack()
+l3.pack()
+
 #buttons
 showScores = tk.Button(scores, text="Mostra Film", width=15, command=show_all, font=("Arial",25)).pack()
 time = tk.Button(scores, text="Info", width=15, command=show_info, font=("Arial",25)).pack()
@@ -106,6 +139,9 @@ closeButton = tk.Button(scores, text="Chiudi", width=15, command=exit, font=("Ar
 drop = tk.OptionMenu(scores , clicked , *options).pack()
 ApplyDayButton = tk.Button(scores , text = "Applica giorno" , command = choose_day, font=("Arial",25)).pack()
 RefreshButton = tk.Button(scores, text = 'Aggiorna Database', command = db_update,font=("Arial",25)).pack()
+DumpButton = tk.Button(scores, text = 'Dump Database', command = dump_treeview,font=("Arial",25)).pack()
+LoginButton = tk.Button(scores, text = 'Login/Register', command = login_register,font=("Arial",25)).pack()
+PrintUser = tk.Button(scores, text = 'Printuser', command = print_all_user,font=("Arial",25)).pack()
 
 scores.mainloop()
 
