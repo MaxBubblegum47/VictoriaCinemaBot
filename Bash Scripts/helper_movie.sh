@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python3 ../victoria_cinema/movie.py
+$"../.conda/bin/python" ../victoria_cinema/movie.py
