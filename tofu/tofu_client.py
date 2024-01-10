@@ -4,12 +4,14 @@ import sqlite3
 from tkinter import *
 import Pyro4
 import csv
+from ttkwidgets import CheckboxTreeview
+import hashlib
 
 def show_all():
     listBox.delete(*listBox.get_children())
     
     for i, elem in enumerate(rows, start=0):
-        listBox.insert("", "end", values=(i, elem[0], elem[1], elem[2], elem[3], elem[4], elem[5]))
+        listBox.insert("", tk.END, values=(i, elem[0], elem[1], elem[2], elem[3], elem[4], elem[5]))
 
 def show_info():
     curItem = listBox.focus()
@@ -48,15 +50,35 @@ def db_update():
 def dump_treeview():
     greeting_maker.db_dump()
 
-def login_register():
-    print("sono dentro login register")
-    print(T1.get("1.0", "end"), T2.get("1.0", "end"), T3.get("1.0", "end"))
+def register():
+    # get the passord hashed
+    password_hashed = T2.get("1.0", "end")
+    password_hashed = hashlib.sha256(password_hashed.encode('utf-8')).hexdigest()
 
-    greeting_maker.user_login_or_registration(T1.get("1.0", "end"), T2.get("1.0", "end"), T3.get("1.0", "end"))    
+    greeting_maker.user_registration(T1.get("1.0", "end"), password_hashed, str(favourites_list))    
+
+def login():
+    password_hashed = T2.get("1.0", "end")
+    password_hashed = hashlib.sha256(password_hashed.encode('utf-8')).hexdigest()
+
+    res = greeting_maker.user_login(T1.get("1.0", "end"), password_hashed)
+    if res:
+        print("utente loggato correttamente")
+    else:
+        print("utente non loggato")
+
+    # quel greeting andrebbe valutato perche' se ritorna un valore del tipo logged, allora poi
+    # all'interno della finestra scores dobbiamo fare apparire una label con su scritto che mi sono loggato correttamente
+    # insieme al nome utente. L'idea sarebbe che ad utente loggato mi venga caricato la lista dei miei film preferiti correttamente all'interno della check box.
+    # del tipo if T3 is empty allora devo ritornare la lista connessa all'account contenuto nel deb e poi mi serve anche una funzione sicuramente
+    # di update di questa lista :(
 
 def print_all_user():
     greeting_maker.user_print_all()
 
+def add_favourites():
+    curItem = listBox.focus()
+    favourites_list.append(listBox.item(curItem))
     
 
 # main
@@ -121,16 +143,20 @@ l1.config(font =("Arial",25))
 T2 = Text(scores, height = 5, width = 52)
 l2 = Label(scores, text = "password")
 l2.config(font =("Arial",25))
-T3 = Text(scores, height = 5, width = 52)
-l3 = Label(scores, text = "favourite lists")
-l3.config(font =("Arial",25))
+# T3 = Text(scores, height = 5, width = 52)
+# l3 = Label(scores, text = "favourite lists")
+# l3.config(font =("Arial",25))
 T1.pack()
 T2.pack()
-T3.pack()
+# T3.pack()
 
 l1.pack()
 l2.pack()
-l3.pack()
+# l3.pack()
+
+# lista dei favoriti
+favourites_list = []
+
 
 #buttons
 showScores = tk.Button(scores, text="Mostra Film", width=15, command=show_all, font=("Arial",25)).pack()
@@ -140,8 +166,10 @@ drop = tk.OptionMenu(scores , clicked , *options).pack()
 ApplyDayButton = tk.Button(scores , text = "Applica giorno" , command = choose_day, font=("Arial",25)).pack()
 RefreshButton = tk.Button(scores, text = 'Aggiorna Database', command = db_update,font=("Arial",25)).pack()
 DumpButton = tk.Button(scores, text = 'Dump Database', command = dump_treeview,font=("Arial",25)).pack()
-LoginButton = tk.Button(scores, text = 'Login/Register', command = login_register,font=("Arial",25)).pack()
+registerButton = tk.Button(scores, text = 'Register', command = register,font=("Arial",25)).pack()
+loginButton = tk.Button(scores, text = 'Login', command = login,font=("Arial",25)).pack()
 PrintUser = tk.Button(scores, text = 'Printuser', command = print_all_user,font=("Arial",25)).pack()
+AddFavourite = tk.Button(scores, text = 'Add Favourites', command = add_favourites,font=("Arial",25)).pack()
 
 scores.mainloop()
 
