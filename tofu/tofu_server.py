@@ -65,24 +65,76 @@ class Tofu(object):
         connection.close()
     
     @Pyro4.expose
-    def user_login_or_registration(self, name, password, favourites):
-        print("Sono dentro il server funzione user login registration")
-        print("ecco i dati passatomi dal client: ", name, password, favourites)
-        db_insert_user(name, password, favourites)
-        Tofu.user_print_all(self)
+    def user_registration(self, name, password, favourites):
+        
+        try:
+            # check prima di inserire i dati 
+            users = Tofu.get_all_user(self)
+            # elem is a tuple
+            for elem in users:
+                if elem[0] == name:
+                    print("Utente gia' presente all'interno del database: ", elem)
+                    # procedura di login
+                    # chiama funzione che fa check sull'hash. Se l'hash e' corretto allora procedi a ritornare
+                    # un valore che mi poi mi porta a loggare correttamente all'interno della mia interfaccia
+                else:
+                    db_insert_user(name, password, favourites)
+
+            Tofu.user_print_all(self)
+        except:
+            print("Nuovo elemento inserito")
+            db_insert_user(name, password, favourites)
+        
+    @Pyro4.expose
+    def user_login(self, name, password):
+        try:
+            users = Tofu.get_all_user(self)
+            passwords = Tofu.get_all_hash(self)
+            for elem in users:
+                if elem[0] == name:
+                    for elem2 in passwords:
+                        if elem2[0] == password:
+                            print("user logged as: ", name)
+                            return 1
+        except:
+            return 0
+        
+        return 0
 
     @Pyro4.expose        
     def user_print_all(self):
-        print("Sono dentro user print all")
-        connection = sqlite3.connect("users.db")
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM users")
-        rows = cursor.fetchall()
-        print(rows)
-        connection.close()
+        try:
+            print("Sono dentro user print all")
+            connection = sqlite3.connect("users.db")
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM users")
+            rows = cursor.fetchall()
+            print(rows)
+            connection.close()
+        except:
+            print("Database non ancora creato")
         
-
-
+    def get_all_user(self):
+        try:
+            connection = sqlite3.connect("users.db")
+            cursor = connection.cursor()
+            cursor.execute("SELECT name FROM users")
+            users = cursor.fetchall()
+            connection.close()
+        except:
+            print("Database non ancora creato")
+        return users
+    
+    def get_all_hash(self):
+        try:
+            connection = sqlite3.connect("users.db")
+            cursor = connection.cursor()
+            cursor.execute("SELECT password FROM users")
+            users = cursor.fetchall()
+            connection.close()
+        except:
+            print("Database non ancora creato")
+        return users
 
         
 def main():
