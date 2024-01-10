@@ -59,7 +59,7 @@ def db_insert_user(name, password, favourites):
     connection = sqlite3.connect("users.db")
     cursor = connection.cursor()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS users (name TEXT, password INTEGER, favourites TEXT)")
-    cursor.execute("INSERT or IGNORE INTO users VALUES (?, ?, ?)", (u.name, u.password, u.favourites))
+    cursor.execute("CREATE TABLE IF NOT EXISTS users (name TEXT PRIMARY KEY, password TEXT, favourites TEXT)")
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?)", (u.name, u.password, u.favourites))
     connection.commit()
     connection.close()
