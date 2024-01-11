@@ -11,7 +11,6 @@ class Film:
         self.reservation = reservation # link for reservate a seat
         self.trailer = trailer # link to see the movie's trailer
 
-
 def db_insert(title, direction, genere, duration, cast, time_slots, reservation, trailer):
     f = Film(title, direction, genere, duration, cast, time_slots, reservation, trailer)
 

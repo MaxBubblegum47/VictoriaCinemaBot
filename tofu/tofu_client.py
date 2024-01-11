@@ -106,7 +106,6 @@ class tofu(tk.Frame):
         self.AddFavourite = tk.Button(root, text = 'Add Favourites', command = self.add_favourites,font=("Arial",25))
         self.AddFavourite.pack(side='top', fill='x')
         
-
     def show_all_helper(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
         rows = greeting_maker.get_film()

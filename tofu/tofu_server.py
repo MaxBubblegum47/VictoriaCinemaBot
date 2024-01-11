@@ -148,8 +148,7 @@ class Tofu(object):
         except:
             print("Database non ancora creato")
         return users
-
-        
+     
 def main():
     daemon = Pyro4.Daemon()                # make a Pyro daemon
     ns = Pyro4.locateNS()                  # find the name server

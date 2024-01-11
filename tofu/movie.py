@@ -159,8 +159,6 @@ def Even_Movie():
         
         print("Movie Even searched at time: " + str(now))
 
-
-
 def main():
 
 
@@ -170,7 +168,6 @@ def main():
     Odd_Movie()
 
     db_test()
-
 
 if __name__ == "__main__":
     main()
