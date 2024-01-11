@@ -3,7 +3,7 @@ import hashlib
 import Pyro4
 import sqlite3
 from tkinter import *
-from movie import web_scraping, Even_Movie, Odd_Movie
+from movie import web_scraping, Even_Movie, Odd_Movie, delete_old_db
 import os
 import csv
 from db import db_insert_user
@@ -35,6 +35,7 @@ class Tofu(object):
     @Pyro4.expose
     def db_update(self):
         print("funzione update")
+        delete_old_db()
         web_scraping()
         Even_Movie()
         Odd_Movie()
@@ -86,8 +87,9 @@ class Tofu(object):
             db_insert_user(name, password, favourites)
         
     @Pyro4.expose
-    def user_login(self, name, password):
+    def user_login(self, name, password, favourites):
         try:
+            all_data = Tofu.user_print_all(self)
             users = Tofu.get_all_user(self)
             passwords = Tofu.get_all_hash(self)
             for elem in users:
@@ -95,6 +97,17 @@ class Tofu(object):
                     for elem2 in passwords:
                         if elem2[0] == password:
                             print("user logged as: ", name)
+
+                            # print(users)
+                            # print(all_data)
+                            
+                            connection = sqlite3.connect("users.db")
+
+                            cursor = connection.cursor()
+                            cursor.execute("UPDATE users SET favourites = ? WHERE name = ?", (favourites, name))
+
+                            connection.close()
+
                             return 1
         except:
             return 0
