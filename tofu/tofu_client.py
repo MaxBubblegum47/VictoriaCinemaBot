@@ -142,11 +142,19 @@ class tofu(tk.Frame):
         newWindow.title("Info")
     
         # sets the geometry of toplevel
-        newWindow.geometry("700x500")
+        newWindow.geometry("700x700")
     
         # A Label widget to show in toplevel
         text= Text(newWindow,wrap=WORD, font=("Arial",25))
-        text.insert(INSERT,self.listBox.item(curItem))
+        content = self.listBox.item(curItem)
+        content = content['values']
+
+        for elem in content:
+            elem = str(elem)
+            elem += '\n\n'
+
+            text.insert(INSERT,elem)
+        
         text.pack()
 
     def db_update(self):
