@@ -4,7 +4,10 @@ import requests
 import re
 from datetime import datetime
 from db import db_insert, db_test
+import os
 
+def delete_old_db():
+    os.remove('movies.db')
 
 def web_scraping():
     url = "https://www.victoriacinema.it/victoria_cinema/index.php"
@@ -160,6 +163,7 @@ def Even_Movie():
 
 def main():
 
+
     web_scraping()
     Even_Movie()
 
@@ -167,14 +171,6 @@ def main():
 
     db_test()
 
-    # with open('saveEven.txt', 'wb') as file:
-    #     pickle.dump(messageEven, file)
-
-    # with open('saveOdd.txt', 'wb') as file:
-    #     pickle.dump(messageOdd, file)
-
-    # with open('saveOdd.txt', 'rb') as file:
-    #     x = pickle.load(file)
 
 if __name__ == "__main__":
     main()
