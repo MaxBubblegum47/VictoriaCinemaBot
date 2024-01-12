@@ -11,7 +11,7 @@ from functools import partial
 
 class tofu(tk.Frame):
     def __init__(self, root):
-        root.geometry("2000x650")
+        root.geometry("2000x750")
 
         # create Treeview with 3 columns
         cols = ('N.', 'Title', 'Direction', 'Genre', 'Duration')
@@ -105,6 +105,8 @@ class tofu(tk.Frame):
         self.LoginButton.pack(side='top', fill='x')
         self.AddFavourite = tk.Button(root, text = 'Add Favourites', command = self.add_favourites,font=("Arial",25))
         self.AddFavourite.pack(side='top', fill='x')
+        self.InfoPrices = tk.Button(root, text = 'Info Prezzi', command = self.show_info_prices,font=("Arial",25))
+        self.InfoPrices.pack(side='top', fill='x')
         
     def show_all_helper(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
@@ -213,6 +215,25 @@ class tofu(tk.Frame):
 
         curItem = self.listBox.focus()
         self.favourites_list.append(self.listBox.item(curItem))
+
+    def show_info_prices(self):
+        greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
+
+        newWindow = tk.Tk()
+        newWindow.title("Info")
+        newWindow.geometry("700x700")
+    
+
+        text= Text(newWindow,wrap=WORD, font=("Arial",25))
+        contentOdd, contentEven =  greeting_maker.get_info_price()
+        
+        for elem in contentOdd:
+            text.insert(INSERT,elem + '\n')
+        
+        for elem in contentEven:
+            text.insert(INSERT, elem + '\n')
+
+        text.pack()
 
 def main():
     root = Tk()
