@@ -1,71 +1,76 @@
-#!/usr/bin/env python3
-"""Script for Tkinter GUI chat client."""
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
 
 
+"""
+The below function gets the latest messages from the server and inserts it into the Listbox object.
+If the window has somehow been closed abruptly, we remove the user.
+"""
 def receive():
-    """Handles receiving of messages."""
-    while True:
+    stop = False
+    while True and not stop:
         try:
-            msg = client_socket.recv(BUFSIZ).decode("utf8")
-            msg_list.insert(tkinter.END, msg)
-        except OSError:  # Possibly client has left the chat.
+            msg = clientSocket.recv(BUFFSIZE).decode('utf8')
+            msgList.insert(tkinter.END,msg)
+        except OSError:
+            cleanAndClose()
             break
 
-
-def send(event=None):  # event is passed by binders.
-    """Handles sending of messages."""
-    msg = my_msg.get()
-    my_msg.set("")  # Clears input field.
-    client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
-        client_socket.close()
+"""
+The below function sends the messages of the user to the server to be broadcast, 
+if the exit sequence is entered, user's data is purged, and the window is closed.
+"""
+def send(event=None):
+    msg = myMsg.get()
+    myMsg.set("")
+    clientSocket.send(bytes(msg,'utf8'))
+    if msg is "'exit'":
+        clientSocket.close()
+        cleanAndClose()
         top.quit()
 
-
-def on_closing(event=None):
-    """This function is to be called when the window is closed."""
-    my_msg.set("{quit}")
+"""
+If the exit sequence is entered, this function is executed.
+"""
+def cleanAndClose(event=None):
+    myMsg.set("'exit'")
     send()
+    top.destroy()
+    stop = True
 
-top = tkinter.Tk()
-top.title("Chatter")
+if __name__ == '__main__':
+    top = tkinter.Tk()
+    top.title('ChatRoom')
+    messageFrame = tkinter.Frame(top)
+    scrollbar = tkinter.Scrollbar(messageFrame)
 
-messages_frame = tkinter.Frame(top)
-my_msg = tkinter.StringVar()  # For the messages to be sent.
-my_msg.set("Type your messages here.")
-scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
-# Following will contain the messages.
-msg_list = tkinter.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
-scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
-msg_list.pack()
-messages_frame.pack()
+    msgList = tkinter.Listbox(messageFrame, width = 50, yscrollcommand = scrollbar.set)
+    scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+    msgList.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
+    msgList.pack(fill = tkinter.X)
+    messageFrame.pack()
 
-entry_field = tkinter.Entry(top, textvariable=my_msg)
-entry_field.bind("<Return>", send)
-entry_field.pack()
-send_button = tkinter.Button(top, text="Send", command=send)
-send_button.pack()
+    myMsg = tkinter.StringVar()
+    myMsg.set("Click to type")
+    entryField = tkinter.Entry(top,textvariable = myMsg)
+    entryField.bind("<Return>", send)
+    entryField.pack()
+    sendButton = tkinter.Button(top, text = 'Send', command = send, height = 1, width = 7)
+    sendButton.pack()
 
-top.protocol("WM_DELETE_WINDOW", on_closing)
+    top.protocol("WM_DELETE_WINDOW", cleanAndClose)
 
-#----Now comes the sockets part----
-HOST = input('Enter host: ')
-PORT = input('Enter port: ')
-if not PORT:
-    PORT = 33000
-else:
-    PORT = int(PORT)
+    HOST = input('Enter HOST IP Address: ')
+    PORT = input('Enter PORT number: ')
+    PORT = 5545 if not PORT else int(PORT)
 
-BUFSIZ = 1024
-ADDR = (HOST, PORT)
+    BUFFSIZE = 1024
+    ADDR = (HOST, PORT)
+    clientSocket = socket(AF_INET, SOCK_STREAM)
+    clientSocket.connect(ADDR)
 
-client_socket = socket(AF_INET, SOCK_STREAM)
-client_socket.connect(ADDR)
-
-receive_thread = Thread(target=receive)
-receive_thread.start()
-tkinter.mainloop()  # Starts GUI execution.
+    receiveThread = Thread(target=receive)
+    receiveThread.start()
+    tkinter.mainloop()  
+    receiveThread.join()
