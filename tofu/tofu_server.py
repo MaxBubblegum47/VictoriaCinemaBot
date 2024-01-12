@@ -3,7 +3,7 @@ import hashlib
 import Pyro4
 import sqlite3
 from tkinter import *
-from movie import web_scraping, Even_Movie, Odd_Movie, delete_old_db
+from movie import web_scraping, Even_Movie, Odd_Movie, delete_old_db, getting_info
 import os
 import csv
 from db import db_insert_user
@@ -148,7 +148,12 @@ class Tofu(object):
         except:
             print("Database non ancora creato")
         return users
-     
+    
+    @Pyro4.expose
+    def get_info_price(self):
+        OddInfo, EvenInfo  = getting_info()
+        return OddInfo, EvenInfo
+
 def main():
     daemon = Pyro4.Daemon()                # make a Pyro daemon
     ns = Pyro4.locateNS()                  # find the name server
