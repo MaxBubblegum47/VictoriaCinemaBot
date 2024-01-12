@@ -81,7 +81,7 @@ class Tofu(object):
                 else:
                     db_insert_user(name, password, favourites)
 
-            Tofu.user_print_all(self)
+            # Tofu.user_print_all(self)
         except:
             print("Nuovo elemento inserito")
             db_insert_user(name, password, favourites)
@@ -89,7 +89,7 @@ class Tofu(object):
     @Pyro4.expose
     def user_login(self, name, password, favourites):
         try:
-            all_data = Tofu.user_print_all(self)
+            # all_data = Tofu.user_print_all(self)
             users = Tofu.get_all_user(self)
             passwords = Tofu.get_all_hash(self)
             for elem in users:
@@ -114,18 +114,18 @@ class Tofu(object):
         
         return 0
 
-    @Pyro4.expose        
-    def user_print_all(self):
-        try:
-            print("Sono dentro user print all")
-            connection = sqlite3.connect("users.db")
-            cursor = connection.cursor()
-            cursor.execute("SELECT * FROM users")
-            rows = cursor.fetchall()
-            print(rows)
-            connection.close()
-        except:
-            print("Database non ancora creato")
+    # @Pyro4.expose        
+    # def user_print_all(self):
+    #     try:
+    #         print("Sono dentro user print all")
+    #         connection = sqlite3.connect("users.db")
+    #         cursor = connection.cursor()
+    #         cursor.execute("SELECT * FROM users")
+    #         rows = cursor.fetchall()
+    #         print(rows)
+    #         connection.close()
+    #     except:
+    #         print("Database non ancora creato")
         
     def get_all_user(self):
         try:
@@ -154,10 +154,36 @@ class Tofu(object):
         OddInfo, EvenInfo  = getting_info()
         return OddInfo, EvenInfo
 
+    @Pyro4.expose
+    def dump_fav(self, name):
+
+        print("funzione dump favourites list")
+        if os.path.exists("users.db"):
+            print("Users DB presente")
+        else:
+            print("DB users ancora non presente")
+            return 0
+
+        connection = sqlite3.connect("users.db")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT favourites FROM users WHERE name = ?", (name,))
+        res = ''
+        with open('favlist.txt','w') as f:
+            
+            for result in cursor:
+              res += str(result)
+            
+
+            f.write(res.replace('values', '').replace('text', '').replace('image', '').replace('/', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
+                    .replace('{', '').replace('}', '').replace("\\","").replace(":"," ").replace("'","").replace(",",'\n').replace('"',''))
+
+        connection.close()
+
 def main():
     daemon = Pyro4.Daemon()                # make a Pyro daemon
     ns = Pyro4.locateNS()                  # find the name server
-    uri = daemon.register(Tofu)   # register the greeting maker as a Pyro object
+    uri = daemon.register(Tofu)            # register the greeting maker as a Pyro object
     ns.register("example.greeting", uri)   # register the object with a name in the name server
 
     print("Ready. Object uri =", uri)      # print the uri so we can use it in the client later
