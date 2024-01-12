@@ -107,6 +107,8 @@ class tofu(tk.Frame):
         self.AddFavourite.pack(side='top', fill='x')
         self.InfoPrices = tk.Button(root, text = 'Info Prezzi', command = self.show_info_prices,font=("Arial",25))
         self.InfoPrices.pack(side='top', fill='x')
+        self.FilmChat = tk.Button(root, text = 'Chat', command = self.film_chat,font=("Arial",25))
+        self.FilmChat.pack(side='top', fill='x')
         
     def show_all_helper(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
@@ -234,6 +236,38 @@ class tofu(tk.Frame):
             text.insert(INSERT, elem + '\n')
 
         text.pack()
+
+    def film_chat(self):
+        def send_message():
+            msg_to_send = entry_field.get()
+            
+
+        curItem = self.listBox.focus()
+        print(curItem.replace('I','').replace('0',''))
+
+        top = tk.Tk()
+        top.title("Chatter")
+
+        messages_frame = tk.Frame(top)
+        my_msg = tk.StringVar()  # For the messages to be sent.
+        my_msg.set("Type your messages here.")
+        scrollbar = tk.Scrollbar(messages_frame)  # To navigate through past messages.
+        # Following will contain the messages.
+        msg_list = tk.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        msg_list.pack(side=tk.LEFT, fill=tk.BOTH)
+        msg_list.pack()
+        messages_frame.pack()
+
+        entry_field = tk.Entry(top, textvariable=my_msg)
+        entry_field.bind("<Return>", send_message)
+        entry_field.pack()
+        send_button = tk.Button(top, text="Send", command=send_message)
+        send_button.pack()
+
+        top.protocol("WM_DELETE_WINDOW", exit)
+
+        
 
 def main():
     root = Tk()
