@@ -1,40 +1,71 @@
-import sys
-import socket
-import threading
+#!/usr/bin/env python3
+"""Script for Tkinter GUI chat client."""
+from socket import AF_INET, socket, SOCK_STREAM
+from threading import Thread
+import tkinter
 
-#TODO:end connection with 'exit'
-def connect(s):
+
+def receive():
+    """Handles receiving of messages."""
     while True:
-        r_msg = s.recv(1024)
-        if not r_msg:
+        try:
+            msg = client_socket.recv(BUFSIZ).decode("utf8")
+            msg_list.insert(tkinter.END, msg)
+        except OSError:  # Possibly client has left the chat.
             break
-        if r_msg == '':
-            pass
-        else:
-            print(r_msg.decode())
 
-def receive(s):
-    while True:
-        s_msg = input().replace('b', '').encode('utf-8')
-        if s_msg == '':
-            pass
-        if s_msg.decode() == 'exit':
-            print("wan exit")
-            break
-        else:
-            s.sendall(s_msg)
 
-if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("usage: %s [ip adress][port] " % sys.argv[0] )
-        sys.exit(0)
+def send(event=None):  # event is passed by binders.
+    """Handles sending of messages."""
+    msg = my_msg.get()
+    my_msg.set("")  # Clears input field.
+    client_socket.send(bytes(msg, "utf8"))
+    if msg == "{quit}":
+        client_socket.close()
+        top.quit()
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.connect((sys.argv[1], int(sys.argv[2])))
-    thread1 = threading.Thread(target = connect, args = ([s]))
-    thread2 = threading.Thread(target = receive, args = ([s]))
-    thread1.start()
-    thread2.start()
-    thread1.join()
-    thread2.join()
+
+def on_closing(event=None):
+    """This function is to be called when the window is closed."""
+    my_msg.set("{quit}")
+    send()
+
+top = tkinter.Tk()
+top.title("Chatter")
+
+messages_frame = tkinter.Frame(top)
+my_msg = tkinter.StringVar()  # For the messages to be sent.
+my_msg.set("Type your messages here.")
+scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
+# Following will contain the messages.
+msg_list = tkinter.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
+scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
+msg_list.pack()
+messages_frame.pack()
+
+entry_field = tkinter.Entry(top, textvariable=my_msg)
+entry_field.bind("<Return>", send)
+entry_field.pack()
+send_button = tkinter.Button(top, text="Send", command=send)
+send_button.pack()
+
+top.protocol("WM_DELETE_WINDOW", on_closing)
+
+#----Now comes the sockets part----
+HOST = input('Enter host: ')
+PORT = input('Enter port: ')
+if not PORT:
+    PORT = 33000
+else:
+    PORT = int(PORT)
+
+BUFSIZ = 1024
+ADDR = (HOST, PORT)
+
+client_socket = socket(AF_INET, SOCK_STREAM)
+client_socket.connect(ADDR)
+
+receive_thread = Thread(target=receive)
+receive_thread.start()
+tkinter.mainloop()  # Starts GUI execution.
