@@ -159,15 +159,50 @@ def Even_Movie():
         
         print("Movie Even searched at time: " + str(now))
 
+def getting_info():
+    replacers = {'</div>' : ' ', '<strong>' : ' ', '</span>' : ' ', '</strong>' : ' ', 
+                 '<br/>' : ' ', '</a>' : ' '}
+
+    url = "https://www.victoriacinema.it/victoria_cinema/prezziecard.php"
+    
+    try:
+        body = requests.get(url)
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        raise SystemExit(e)
+    
+    with open('film_info.html', 'wb+') as f:
+        f.write(body.content) 
+    
+    with open('film_info.html', 'rb') as f:
+        soup = BeautifulSoup(f.read(), 'lxml')
+    
+    divsOdd = soup.find_all("div", class_="priceTab_row cleared odd")
+    divsEven = soup.find_all("div", class_="priceTab_row cleared even")
+
+    resOdd = str(divsOdd)
+    resOdd = re.findall('>([^"]*)<', resOdd)
+
+    listOdd = []
+
+    for elem in resOdd:
+        listOdd.append(elem.replace('</div>', ' ').replace('<strong>', ' ').replace('</span>', ' ').replace('</strong>', ' ').replace('<br/>', ' ').replace('</a>', ' '))
+
+    resEven = str(divsEven)
+    resEven = re.findall('>([^"]*)<', resEven)
+
+    listEven = []
+
+    for elem in resEven:
+        listEven.append(elem.replace('</div>', ' ').replace('<strong>', ' ').replace('</span>', ' ').replace('</strong>', ' ').replace('<br/>', ' ').replace('</a>', ' '))
+
+    return listOdd, listEven
+
 def main():
-
-
     web_scraping()
     Even_Movie()
-
     Odd_Movie()
-
     db_test()
+    getting_info()
 
 if __name__ == "__main__":
     main()
