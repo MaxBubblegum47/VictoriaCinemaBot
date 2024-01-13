@@ -1,17 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
-import sqlite3
 from tkinter import *
 import Pyro4
-import csv
-from ttkwidgets import CheckboxTreeview
 import hashlib
-from functools import partial
-
+from subprocess import call
+import threading
 
 class tofu(tk.Frame):
     def __init__(self, root):
-        root.geometry("2000x750")
+        root.geometry("2000x850")
 
         # create Treeview with 3 columns
         cols = ('N.', 'Title', 'Direction', 'Genre', 'Duration')
@@ -91,7 +88,7 @@ class tofu(tk.Frame):
         self.showroot.pack(side='top', fill='x') # show all film
         self.time = tk.Button(root, text="Info", width=15, command=self.show_info, font=("Arial",25))
         self.time.pack(side='top', fill='x') # show times slots for film
-        self.closeButton = tk.Button(root, text="Chiudi", width=15, command=exit, font=("Arial",25))
+        self.closeButton = tk.Button(root, text="Chiudi", width=15, command=lambda:[root.destroy, self.kill_threads], font=("Arial",25))
         self.closeButton.pack(side='bottom') # close the app
         self.drop = tk.OptionMenu(root , self.clicked , *options)
         self.drop.pack(side='top', fill='x') # choice menu with days
@@ -109,8 +106,9 @@ class tofu(tk.Frame):
         self.InfoPrices.pack(side='top', fill='x')
         self.DumpFv = tk.Button(root, text = 'Dump Favourites List', command = self.dump_favourites_list,font=("Arial",25))
         self.DumpFv.pack(side='top', fill='x')
-        # self.FilmChat = tk.Button(root, text = 'Chat', command = self.film_chat,font=("Arial",25))
-        # self.FilmChat.pack(side='top', fill='x')
+        
+        self.FilmChat = tk.Button(root, text = 'Chat', command = self.film_chat,font=("Arial",25))
+        self.FilmChat.pack(side='top', fill='x')
         
     def show_all_helper(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
@@ -206,6 +204,9 @@ class tofu(tk.Frame):
             self.RegisterButton.destroy()
             self.LoginButton.destroy()
 
+            with open('logged_username.txt', 'w') as f:
+                f.write(username)
+
         else:
             print("utente non loggato")
 
@@ -244,7 +245,19 @@ class tofu(tk.Frame):
         arg = self.login_label.cget('text')
         greeting_maker.dump_fav(arg)
 
-        
+    def film_chat(self):
+        greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
+        greeting_maker.chat_server()
+
+        self.thread = threading.Thread(target= self.chat_client)
+        self.thread.start()
+
+    def chat_client(self):
+        call(['python', 'chat_client.py'])
+
+    def kill_threads(self):
+        self.thread.stop()
+    
 
 def main():
     root = Tk()
