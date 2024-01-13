@@ -7,6 +7,8 @@ from movie import web_scraping, Even_Movie, Odd_Movie, delete_old_db, getting_in
 import os
 import csv
 from db import db_insert_user
+import threading
+from subprocess import call
 
 class Tofu(object):
     @Pyro4.expose
@@ -179,6 +181,14 @@ class Tofu(object):
                     .replace('{', '').replace('}', '').replace("\\","").replace(":"," ").replace("'","").replace(",",'\n').replace('"',''))
 
         connection.close()
+
+    @Pyro4.expose
+    def chat_server(self):
+        thread = threading.Thread(target= self.server_thread)
+        thread.start()
+
+    def server_thread(self):
+        call(['python', 'chat_server.py'])
 
 def main():
     daemon = Pyro4.Daemon()                # make a Pyro daemon
