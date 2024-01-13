@@ -25,19 +25,20 @@ def send(event=None):
     msg = myMsg.get()
     myMsg.set("")
     clientSocket.send(bytes(msg,'utf8'))
-    if msg is "'exit'":
+    if msg == "'exit'":
         clientSocket.close()
         cleanAndClose()
-        top.quit()
+        # top.quit()
+        top.destroy()
 
 """
 If the exit sequence is entered, this function is executed.
 """
 def cleanAndClose(event=None):
-    myMsg.set("'exit'")
-    send()
+    # myMsg.set("exit")
+    # send()
     top.destroy()
-    stop = True
+    # stop = True
 
 if __name__ == '__main__':
     top = tkinter.Tk()
@@ -52,7 +53,19 @@ if __name__ == '__main__':
     messageFrame.pack()
 
     myMsg = tkinter.StringVar()
-    myMsg.set("Click to type")
+
+    username = 'user'
+
+    try:
+        with open('logged_username.txt', 'r') as f:
+            username = f.read()
+
+        username = username.replace('\n','')
+        print('Utente loggato come: ', username)
+    except:
+        print('Nessun utente loggato')
+
+    myMsg.set(username)
     entryField = tkinter.Entry(top,textvariable = myMsg)
     entryField.bind("<Return>", send)
     entryField.pack()
@@ -61,9 +74,12 @@ if __name__ == '__main__':
 
     top.protocol("WM_DELETE_WINDOW", cleanAndClose)
 
-    HOST = input('Enter HOST IP Address: ')
-    PORT = input('Enter PORT number: ')
-    PORT = 5545 if not PORT else int(PORT)
+    # HOST = input('Enter HOST IP Address: ')
+    # PORT = input('Enter PORT number: ')
+    # PORT = 5545 if not PORT else int(PORT)
+
+    HOST = '127.0.0.1'
+    PORT = 5545
 
     BUFFSIZE = 1024
     ADDR = (HOST, PORT)
