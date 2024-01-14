@@ -5,6 +5,7 @@ import Pyro4
 import hashlib
 from subprocess import call
 import threading
+from PIL import ImageTk, Image
 
 class tofu(tk.Frame):
     def __init__(self, root):
@@ -14,6 +15,17 @@ class tofu(tk.Frame):
         cols = ('N.', 'Title', 'Direction', 'Genre', 'Duration')
         self.listBox = ttk.Treeview(root, columns=cols, selectmode='browse', show='headings')
         self.listBox.pack(side='right', fill='y')
+
+        root.title("TofuFilm")
+        # root.iconbitmap("/home/maxbubblegum47/Desktop/VictoriaCinemaBot/tofu/kirby.ico")
+
+        im = Image.open('sleepykirby.jpg')
+        photo = ImageTk.PhotoImage(im)
+        root.wm_iconphoto(True, photo)
+
+        # ico = Image.open('kirby.jpg')
+        # photo = ImageTk.PhotoImage(ico)
+        # root.wm_iconphoto(False, photo)
 
         # Create a Scrollbar
         self.scrollbar = ttk.Scrollbar(root, orient="vertical", command=self.listBox.yview)
