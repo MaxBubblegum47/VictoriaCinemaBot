@@ -88,6 +88,8 @@ class tofu(tk.Frame):
         self.showroot.pack(side='top', fill='x') # show all film
         self.time = tk.Button(root, text="Info", width=15, command=self.show_info, font=("Arial",25))
         self.time.pack(side='top', fill='x') # show times slots for film
+        self.InfoPrices = tk.Button(root, text = 'Info Prezzi', command = self.show_info_prices,font=("Arial",25))
+        self.InfoPrices.pack(side='top', fill='x')
         self.closeButton = tk.Button(root, text="Chiudi", width=15, command=lambda:[root.destroy, self.kill_threads], font=("Arial",25))
         self.closeButton.pack(side='bottom') # close the app
         self.drop = tk.OptionMenu(root , self.clicked , *options)
@@ -102,13 +104,13 @@ class tofu(tk.Frame):
         self.LoginButton.pack(side='top', fill='x')
         self.AddFavourite = tk.Button(root, text = 'Add Favourites', command = self.add_favourites,font=("Arial",25))
         self.AddFavourite.pack(side='top', fill='x')
-        self.InfoPrices = tk.Button(root, text = 'Info Prezzi', command = self.show_info_prices,font=("Arial",25))
-        self.InfoPrices.pack(side='top', fill='x')
+        self.UpdateFav = tk.Button(root, text = 'Update Favourites', command = self.update_favourites,font=("Arial",25))
+        self.UpdateFav.pack(side='top', fill='x')
         self.DumpFv = tk.Button(root, text = 'Dump Favourites List', command = self.dump_favourites_list,font=("Arial",25))
         self.DumpFv.pack(side='top', fill='x')
-        
         self.FilmChat = tk.Button(root, text = 'Chat', command = self.film_chat,font=("Arial",25))
         self.FilmChat.pack(side='top', fill='x')
+
         
     def show_all_helper(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
@@ -167,7 +169,23 @@ class tofu(tk.Frame):
 
     def dump_treeview(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
-        greeting_maker.db_dump()
+        # cursor = greeting_maker.db_dump()
+        rows = greeting_maker.get_film()
+
+        to_write = []
+        for elem in rows:
+                to_write.append(elem[0] + ', ' + elem[1] + ', ' +  elem[2] + ', ' +  elem[3] + ', ' +  elem[4] + ', ' +  elem[5] + ', ' +  elem[6] + ', ' +  elem[7] + '\n')
+
+        with open('film_dump.txt', 'w') as file:
+            for l in to_write:
+                file.write(l)
+
+        # with open('output.csv','w') as out_csv_file:
+        #     csv_out = csv.writer(out_csv_file)
+        #     # write header                        
+        #     # csv_out.writerow([d[0] for d in cursor])
+        #     # write data                          
+        #     csv_out.writerow(cursor)
 
     def register(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
@@ -186,13 +204,13 @@ class tofu(tk.Frame):
 
 
         username = self.T1.get("1.0", "end")
-        password_hashed = self.T2.get("1.0", "end")
-        password_hashed = hashlib.sha256(password_hashed.encode('utf-8')).hexdigest()
+        self.password_hashed = self.T2.get("1.0", "end")
+        self.password_hashed = hashlib.sha256(self.password_hashed.encode('utf-8')).hexdigest()
 
-        print("username: ", username)
-        print("hash: ", password_hashed)
+        # print("username: ", username)
+        # print("hash: ", self.password_hashed)
 
-        res = greeting_maker.user_login(username, password_hashed, str(self.favourites_list))
+        res = greeting_maker.user_login(username, self.password_hashed, str(self.favourites_list))
         if res:
             print("utente loggato correttamente")
             self.login_label.config(text=username)
@@ -216,10 +234,12 @@ class tofu(tk.Frame):
         greeting_maker.user_print_all()
 
     def add_favourites(self):
-        greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
-
         curItem = self.listBox.focus()
         self.favourites_list.append(self.listBox.item(curItem))
+
+    def update_favourites(self):       
+        greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
+        greeting_maker.update_fav(self.login_label.cget('text'), str(self.favourites_list), self.password_hashed)
 
     def show_info_prices(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
@@ -243,11 +263,14 @@ class tofu(tk.Frame):
     def dump_favourites_list(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
         arg = self.login_label.cget('text')
-        greeting_maker.dump_fav(arg)
+        res = greeting_maker.dump_fav(arg)
+        print("Risultati favoriti: ", res)
+        with open('favourites_list.txt', 'w') as f:
+            f.write(res)
 
     def film_chat(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
-        greeting_maker.chat_server()
+        self.chat_serve_thread = greeting_maker.chat_server()
 
         self.thread = threading.Thread(target= self.chat_client)
         self.thread.start()
@@ -257,6 +280,7 @@ class tofu(tk.Frame):
 
     def kill_threads(self):
         self.thread.stop()
+        self.chat_serve_thread
     
 
 def main():
