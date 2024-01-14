@@ -57,15 +57,21 @@ class Tofu(object):
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM example")
 
-        with open('output.csv','w') as out_csv_file:
-            csv_out = csv.writer(out_csv_file)
-            # write header                        
-            csv_out.writerow([d[0] for d in cursor.description])
-            # write data                          
-            for result in cursor:
-              csv_out.writerow(result)
+        # with open('output.csv','w') as out_csv_file:
+        #     csv_out = csv.writer(out_csv_file)
+        #     # write header                        
+        #     csv_out.writerow([d[0] for d in cursor.description])
+        #     # write data                          
+        #     for result in cursor:
+        #       csv_out.writerow(result)
+
+        res = ''
+        for elem in cursor:
+            res += str(elem)
 
         connection.close()
+
+        return res
     
     @Pyro4.expose
     def user_registration(self, name, password, favourites):
@@ -107,7 +113,7 @@ class Tofu(object):
 
                             cursor = connection.cursor()
                             cursor.execute("UPDATE users SET favourites = ? WHERE name = ?", (favourites, name))
-
+                            connection.commit()
                             connection.close()
 
                             return 1
@@ -117,17 +123,17 @@ class Tofu(object):
         return 0
 
     # @Pyro4.expose        
-    # def user_print_all(self):
-    #     try:
-    #         print("Sono dentro user print all")
-    #         connection = sqlite3.connect("users.db")
-    #         cursor = connection.cursor()
-    #         cursor.execute("SELECT * FROM users")
-    #         rows = cursor.fetchall()
-    #         print(rows)
-    #         connection.close()
-    #     except:
-    #         print("Database non ancora creato")
+    def user_print_all(self):
+        try:
+            print("Sono dentro user print all")
+            connection = sqlite3.connect("users.db")
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM users")
+            rows = cursor.fetchall()
+            print(rows)
+            connection.close()
+        except:
+            print("Database non ancora creato")
         
     def get_all_user(self):
         try:
@@ -171,21 +177,47 @@ class Tofu(object):
         cursor = connection.cursor()
         cursor.execute("SELECT favourites FROM users WHERE name = ?", (name,))
         res = ''
-        with open('favlist.txt','w') as f:
+        # with open('favlist.txt','w') as f:
             
-            for result in cursor:
-              res += str(result)
+        for result in cursor:
+            res += str(result)
             
 
-            f.write(res.replace('values', '').replace('text', '').replace('image', '').replace('/', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
+        res = (res.replace('values', '').replace('text', '').replace('image', '').replace('/', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
                     .replace('{', '').replace('}', '').replace("\\","").replace(":"," ").replace("'","").replace(",",'\n').replace('"',''))
+
+        print("Risultato dump fav:", res)
 
         connection.close()
 
+        return res
+    
+    @Pyro4.expose
+    def update_fav(self, name, favourites, password):
+        # all_data = Tofu.user_print_all(self)
+        users = Tofu.get_all_user(self)
+        passwords = Tofu.get_all_hash(self)
+        for elem in users:
+            if elem[0] == name:
+                for elem2 in passwords:
+                    if elem2[0] == password:
+                        print("user logged as: ", name)
+                        print("favourites da inserire", favourites)
+                        connection = sqlite3.connect("users.db")
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE users SET favourites = ? WHERE name = ?", (favourites, name))
+                        connection.commit()                        
+                        connection.close()
+
+                        all_data = Tofu.user_print_all(self)
+                        print(all_data)
+
+
     @Pyro4.expose
     def chat_server(self):
-        thread = threading.Thread(target= self.server_thread)
-        thread.start()
+        self.thread = threading.Thread(target= self.server_thread)
+        return self.thread.start()
+         
 
     def server_thread(self):
         call(['python', 'chat_server.py'])
