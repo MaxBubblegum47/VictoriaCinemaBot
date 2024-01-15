@@ -1,8 +1,7 @@
-""" Module that contains the methods for the server side functionality of the chat application"""
-
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 
+# this is all documentations and example stuff pls don't tocuh anything
 """ We'll be using TCP sockets over UDP sockets, so we import AF_NET(Internet address family for IPv4) and SOCK_STREAM(connection oriented TCP)"""
 
 """
@@ -26,13 +25,12 @@ SERVER = socket(AF_INET,SOCK_STREAM)
 SERVER.bind(ADDR)
 
 """
-The below function that will listen and accept all incoming connections.
+This function that will listen and accept all incoming connections.
 The accept method returns a socket object that can be used to communicate wuth the client, and the socket address of the client.
 The send method id used to send an inital greeeting message to the client.
-Then store the address of the client in the dictionary addresses
+Then store the address of the client in the dictionary addresses.
 A seperate thread is created to handle this client.
 """
-
 def acceptIncomingConnections():
     while True:
         client, clientAddress = SERVER.accept()
@@ -43,10 +41,11 @@ def acceptIncomingConnections():
 
 
 """
-The below function will handle all communication to and from a client
-The chat name of the client is obtained 
+This function will handle all communication to and from a client.
+The chat name of the client is obtained .
 Unless the client sends the exit message, he is allowed to chat, else, he is removed from the chat
 and some cleanup is done to remove his/her information.
+In reality the exit message does not work anymore because I have done some modification to handle everything as a thread.
 """
 def handleClient(client):
     name = client.recv(BUFFSIZE).decode("utf8")
@@ -66,9 +65,9 @@ def handleClient(client):
             break
 
 """
-The below function will broadcast a message to all clients in the chat.
+The below function will broadcast a message to all clients in the chat. This is the function
+that permit all the users to see everything is written in the chat.
 """
-
 def broadcast(msg,prefix = ""):
     for client in clients:
         client.send(bytes(prefix,'utf8')+msg)

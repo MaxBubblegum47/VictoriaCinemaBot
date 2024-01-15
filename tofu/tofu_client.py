@@ -13,26 +13,21 @@ class tofu(tk.Frame):
 
         # create Treeview with 3 columns
         cols = ('N.', 'Title', 'Direction', 'Genre', 'Duration')
-        self.listBox = ttk.Treeview(root, columns=cols, selectmode='browse', show='headings')
+        self.listBox = ttk.Treeview(root, columns=cols, selectmode='browse', show='headings') # one day I need to change it into a real listbox
         self.listBox.pack(side='right', fill='y')
 
+        # title and logo
         root.title("TofuFilm")
-        # root.iconbitmap("/home/maxbubblegum47/Desktop/VictoriaCinemaBot/tofu/kirby.ico")
-
         im = Image.open('sleepykirby.jpg')
         photo = ImageTk.PhotoImage(im)
         root.wm_iconphoto(True, photo)
-
-        # ico = Image.open('kirby.jpg')
-        # photo = ImageTk.PhotoImage(ico)
-        # root.wm_iconphoto(False, photo)
 
         # Create a Scrollbar
         self.scrollbar = ttk.Scrollbar(root, orient="vertical", command=self.listBox.yview)
         self.listBox.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(side="right", fill="y")
 
-        # gestion larghezza colonne
+        # it is listbox but it is actually a treeview
         self.listBox.column("N.", width=50)
         self.listBox.column("Title", width=600)
         self.listBox.column("Direction", width=350)
@@ -70,8 +65,10 @@ class tofu(tk.Frame):
         for col in cols:
             self.listBox.heading(col, text=col)    
 
+        # film favourite list 
         self.favourites_list = []
 
+        # label to display into main window
         self.T1 = Text(root, height = 5, width = 52)
         self.l1 = Label(root, text = "username")
         self.l1.config(font =("Arial",25))
@@ -86,6 +83,7 @@ class tofu(tk.Frame):
         self.l1.pack()
         self.l2.pack()
 
+        # default label for user
         self.login_label = Label(root, text = "utente")
         self.login_label.config(font =("Arial",25))
         self.login_label.pack()
@@ -123,7 +121,7 @@ class tofu(tk.Frame):
         self.FilmChat = tk.Button(root, text = 'Chat', command = self.film_chat,font=("Arial",25))
         self.FilmChat.pack(side='top', fill='x')
 
-        
+    # inserting all the film inside the treeview
     def show_all_helper(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
         rows = greeting_maker.get_film()
@@ -139,7 +137,6 @@ class tofu(tk.Frame):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
         rows = greeting_maker.get_film()
 
-
         self.label.config( text = self.clicked.get() ) 
         day = self.label.cget('text')
 
@@ -151,6 +148,7 @@ class tofu(tk.Frame):
             if day in str(elem):
                 self.listBox.insert("", "end", values=(i, elem[0], elem[1], elem[2], elem[3], elem[4], elem[5]))
 
+    # create a windows to dissaply all informations about film 
     def show_info(self):
         curItem = self.listBox.focus()
         newWindow = tk.Tk()
@@ -165,7 +163,7 @@ class tofu(tk.Frame):
         # A Label widget to show in toplevel
         text= Text(newWindow,wrap=WORD, font=("Arial",25))
         content = self.listBox.item(curItem)
-        content = content['values']
+        content = content['values'] # show all contents about the selected film
 
         for elem in content:
             elem = str(elem)
@@ -192,6 +190,8 @@ class tofu(tk.Frame):
             for l in to_write:
                 file.write(l)
 
+        # old way to save it into csv, but it does not work. I cannot return a cursor from server when the db connection is closed. Basically
+        # the cursor is unuseful
         # with open('output.csv','w') as out_csv_file:
         #     csv_out = csv.writer(out_csv_file)
         #     # write header                        
@@ -282,7 +282,8 @@ class tofu(tk.Frame):
 
     def film_chat(self):
         greeting_maker = Pyro4.Proxy("PYRONAME:example.greeting")
-        self.chat_serve_thread = greeting_maker.chat_server()
+        self.chat_server_thread = greeting_maker.chat_server() # -> one day I have to handle this thing differently. Maybe I can do the same thing but sending a message to the server for closing the thread!!!
+                                                              # but now is the exact day before the presentation, so I'm not gonna do anymore changes
 
         self.thread = threading.Thread(target= self.chat_client)
         self.thread.start()
@@ -292,7 +293,7 @@ class tofu(tk.Frame):
 
     def kill_threads(self):
         self.thread.stop()
-        self.chat_serve_thread
+        self.chat_server_thread
     
 
 def main():

@@ -26,6 +26,7 @@ def Odd_Movie():
         soup = BeautifulSoup(f.read(), 'lxml')
 
     divsOdd = soup.find_all("div", class_="filmContainer oddFilm")
+    # old variables for the old way of scraping without db
     messageOdd = ""
     result_list = []
     #oddFilm loop
@@ -77,6 +78,8 @@ def Odd_Movie():
         for div2 in divs2:
             for clean_strip in list(div2.stripped_strings):
                 time_slots.append(clean_strip)
+        
+        # old way of adding film to a list and then print all as a message on telegram
         # # adding film to the list and preparing updating message
         # f = Film(title, direction, genere, duration, cast, time_slots, reservation, trailer)
         # messageOdd = f.title + "\n" + f.direction + "\n" + f.genere + "\n" + f.duration + "\n" + f.cast + "\n" + "\nProiezioni:" + "".join(str("\n" + elem + ":\n") if elem.isalpha() else str(elem + "   ") for elem in f.time_slots )+ "\n\n\nLink Prenotazione:\n" + f.reservation +"\n\n\nTrailer:" + f.trailer +"\n\n\n"            
@@ -180,20 +183,20 @@ def getting_info():
     divsEven = soup.find_all("div", class_="priceTab_row cleared even")
 
     resOdd = str(divsOdd)
-    resOdd = re.findall('>([^"]*)<', resOdd)
+    resOdd = re.findall('>([^"]*)<', resOdd) # the power of regex
 
     listOdd = []
 
     for elem in resOdd:
-        listOdd.append(elem.replace('</div>', ' ').replace('<strong>', ' ').replace('</span>', ' ').replace('</strong>', ' ').replace('<br/>', ' ').replace('</a>', ' '))
+        listOdd.append(elem.replace('</div>', ' ').replace('<strong>', ' ').replace('</span>', ' ').replace('</strong>', ' ').replace('<br/>', ' ').replace('</a>', ' ')) # I know it is really ugly, but it is working fine and the dict wan not working properly
 
     resEven = str(divsEven)
-    resEven = re.findall('>([^"]*)<', resEven)
+    resEven = re.findall('>([^"]*)<', resEven) # the power of regex
 
     listEven = []
 
     for elem in resEven:
-        listEven.append(elem.replace('</div>', ' ').replace('<strong>', ' ').replace('</span>', ' ').replace('</strong>', ' ').replace('<br/>', ' ').replace('</a>', ' '))
+        listEven.append(elem.replace('</div>', ' ').replace('<strong>', ' ').replace('</span>', ' ').replace('</strong>', ' ').replace('<br/>', ' ').replace('</a>', ' ')) # I know it is really ugly, but it is working fine and the dict wan not working properly
 
     return listOdd, listEven
 

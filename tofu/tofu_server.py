@@ -37,7 +37,10 @@ class Tofu(object):
     @Pyro4.expose
     def db_update(self):
         print("funzione update")
-        delete_old_db()
+        
+        delete_old_db() # deleting the old db require less time than waiting the following function to updating it. So basically I throw it away a do it again from 0
+
+        # all this function are scraping related
         web_scraping()
         Even_Movie()
         Odd_Movie()
@@ -48,6 +51,7 @@ class Tofu(object):
         if os.path.exists("movies.db"):
             print("DB presente")
         else:
+            # if there is no db just create another one brand new
             web_scraping()
             Even_Movie()
             Odd_Movie()
@@ -113,7 +117,7 @@ class Tofu(object):
 
                             cursor = connection.cursor()
                             cursor.execute("UPDATE users SET favourites = ? WHERE name = ?", (favourites, name))
-                            connection.commit()
+                            connection.commit() # I forgot to add this line for something like 1 hour and I wasted so much time trying to understand what was not working properly
                             connection.close()
 
                             return 1
@@ -122,7 +126,7 @@ class Tofu(object):
         
         return 0
 
-    # @Pyro4.expose        
+    # @Pyro4.expose, better not to expose this method        
     def user_print_all(self):
         try:
             print("Sono dentro user print all")
@@ -146,6 +150,7 @@ class Tofu(object):
             print("Database non ancora creato")
         return users
     
+    # never expose this method
     def get_all_hash(self):
         try:
             connection = sqlite3.connect("users.db")
@@ -177,7 +182,7 @@ class Tofu(object):
         cursor = connection.cursor()
         cursor.execute("SELECT favourites FROM users WHERE name = ?", (name,))
         res = ''
-        # with open('favlist.txt','w') as f:
+        # with open('favlist.txt','w') as f: was not working, I mean, it worked but was not correct
             
         for result in cursor:
             res += str(result)
@@ -228,7 +233,7 @@ def main():
     uri = daemon.register(Tofu)            # register the greeting maker as a Pyro object
     ns.register("example.greeting", uri)   # register the object with a name in the name server
 
-    print("Ready. Object uri =", uri)      # print the uri so we can use it in the client later
+    print("Ready. Object uri =", uri)      # print the uri so we can use it in the client later -> I don't do that anymore because I uso Pyro4.naming
     daemon.requestLoop()                   # start the event loop of the server to wait for calls
 
 if __name__ == "__main__":

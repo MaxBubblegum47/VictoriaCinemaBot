@@ -3,10 +3,10 @@ from threading import Thread
 import tkinter
 
 
-"""
-The below function gets the latest messages from the server and inserts it into the Listbox object.
+'''
+gets the latest messages from the server and inserts it into the Listbox object.
 If the window has somehow been closed abruptly, we remove the user.
-"""
+'''
 def receive():
     stop = False
     while True and not stop:
@@ -17,10 +17,10 @@ def receive():
             cleanAndClose()
             break
 
-"""
-The below function sends the messages of the user to the server to be broadcast, 
+'''
+it function sends the messages of the user to the server to be broadcast, 
 if the exit sequence is entered, user's data is purged, and the window is closed.
-"""
+'''
 def send(event=None):
     msg = myMsg.get()
     myMsg.set("")
@@ -31,10 +31,9 @@ def send(event=None):
         # top.quit()
         top.destroy()
 
-"""
-If the exit sequence is entered, this function is executed.
-"""
+
 def cleanAndClose(event=None):
+    # this trick was not working properly
     # myMsg.set("exit")
     # send()
     top.destroy()
@@ -74,10 +73,12 @@ if __name__ == '__main__':
 
     top.protocol("WM_DELETE_WINDOW", cleanAndClose)
 
+    # removing stuff that I need to take from user input stdin
     # HOST = input('Enter HOST IP Address: ')
     # PORT = input('Enter PORT number: ')
     # PORT = 5545 if not PORT else int(PORT)
 
+    # default port, not to use in production
     HOST = '127.0.0.1'
     PORT = 5545
 
