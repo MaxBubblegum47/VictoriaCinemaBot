@@ -15,3 +15,7 @@ Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
 
 Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
 docs for more detail on building and pushing.
+
+### Important Commands to launch the docker image
+- `docker build -t my-bot-image .` (in VictoriaCinema main folder)
+- `docker run --name my-bot-container my-bot-image`
