@@ -1,5 +1,0 @@
-beautifulsoup4
-config
-python_telegram_bot
-requests
-
