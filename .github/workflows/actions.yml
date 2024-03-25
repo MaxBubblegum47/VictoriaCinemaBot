@@ -25,7 +25,6 @@ jobs:
     - name: Run Test on Python code with flake8
       run: flake8 --ignore=E501,E121,E126 .
     
-    - name: Change dir
-      run: cd src/
-    - name: Run Pytest  
+    - name: Run Pytest 
+      working-directory: src/
       run: pytest
