@@ -1,3 +1,4 @@
+
 import pytest
 from movie import Film
 import os
@@ -10,7 +11,7 @@ class MockResponse:
 
 def mock_get(url):
     if "https://www.victoriacinema.it/victoria_cinema/index.php" in url:
-        with open("src/website.html", "rb") as f:
+        with open("website.html", "rb") as f:
             return MockResponse(f.read())
     else:
         return MockResponse(b"")
@@ -23,7 +24,7 @@ def mock_requests(monkeypatch):
 
 def test_web_scraping(mock_requests):
     Film.web_scraping()
-    assert "src/website.html" in os.listdir()
+    assert "website.html" in os.listdir()
 
 
 def test_odd_movie(mock_requests):

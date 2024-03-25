@@ -26,5 +26,4 @@ jobs:
       run: flake8 --ignore=E501,E121,E126 .
     
     - name: Run Pytest 
-      working-directory: src/
       run: pytest
