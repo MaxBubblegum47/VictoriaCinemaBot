@@ -65,9 +65,9 @@ class Film:
                 subdivTrailer = re.findall('href="(.*)"', str(divTrailer))
                 try:
                     trailer = subdivTrailer[0]
-                except:
+                except IndexError:
                     print("Index out range for testing")
-                
+
                 # trailer = subdivTrailer[0]
 
                 divTitolo = div1.find("div", class_="titolo")
@@ -139,7 +139,7 @@ class Film:
                 subdivTrailer = re.findall('href="(.*)"', str(divTrailer))
                 try:
                     trailer = subdivTrailer[0]
-                except:
+                except IndexError:
                     print("Index out range for testing")
 
                 divTitolo = div1.find("div", class_="titolo")
@@ -169,7 +169,7 @@ class Film:
                 subdivTrailer = re.findall('href="(.*)"', str(divTrailer))
                 try:
                     trailer = subdivTrailer[0]
-                except:
+                except IndexError:
                     print("Index out range for testing")
 
             divs2 = div.find_all("ul", class_="orari")
