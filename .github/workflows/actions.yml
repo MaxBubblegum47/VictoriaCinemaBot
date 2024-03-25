@@ -18,8 +18,12 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+    
     - name: Install dependencies
-      run: pip install flake8
-    - name: Run Unit Tests and generate coverage report
-      run: |
-          flake8 --ignore=E501,E121,E126 .
+      run: pip install flake8 pytest
+    
+    - name: Run Test on Python code with flake8
+      run: flake8 --ignore=E501,E121,E126 .
+    
+    - name: Run Test on function with unit test 
+       run: cd src/ && pytest 
