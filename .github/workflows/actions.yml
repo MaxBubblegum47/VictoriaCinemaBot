@@ -1,0 +1,14 @@
+name: Test
+
+on:
+  push:
+    branches: [master, main]
+  pull request:
+    branches: [master, main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: flake 8 .
