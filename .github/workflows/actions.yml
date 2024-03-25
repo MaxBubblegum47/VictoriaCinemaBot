@@ -26,4 +26,4 @@ jobs:
       run: flake8 --ignore=E501,E121,E126 .
     
     - name: Run Test on function with unit test 
-       run: cd src/ && pytest 
+      run: cd src/ && pytest 
