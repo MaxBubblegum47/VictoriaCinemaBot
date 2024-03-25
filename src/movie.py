@@ -25,11 +25,11 @@ class Film:
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
 
-        with open('../database/website.html', 'wb+') as f:
+        with open('website.html', 'wb+') as f:
             f.write(body.content)
 
     def Odd_Movie():
-        with open('../database/website.html', 'rb') as f:
+        with open('website.html', 'rb') as f:
             soup = BeautifulSoup(f.read(), 'lxml')
 
         divsOdd = soup.find_all("div", class_="filmContainer oddFilm")
@@ -104,7 +104,7 @@ class Film:
         return result_list
 
     def Even_Movie():
-        with open('../database/website.html', 'rb') as f:
+        with open('website.html', 'rb') as f:
             soup = BeautifulSoup(f.read(), 'lxml')
 
         divsEven = soup.find_all("div", class_="filmContainer evenFilm")
@@ -192,10 +192,10 @@ def main():
     messageOdd = Film.Odd_Movie()
     messageEven = Film.Even_Movie()
 
-    with open('../database/saveEven.txt', 'wb') as file:
+    with open('saveEven.txt', 'wb') as file:
         pickle.dump(messageEven, file)
 
-    with open('../database/saveOdd.txt', 'wb') as file:
+    with open('saveOdd.txt', 'wb') as file:
         pickle.dump(messageOdd, file)
 
 
