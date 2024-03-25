@@ -8,3 +8,4 @@ flask
 lxml
 telebot
 pickle5
+pytest
