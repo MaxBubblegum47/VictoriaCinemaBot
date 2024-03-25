@@ -63,7 +63,12 @@ class Film:
                 soup = BeautifulSoup(body_text, 'lxml')
                 divTrailer = soup.find_all("a", class_="linkTrailer linkExt")
                 subdivTrailer = re.findall('href="(.*)"', str(divTrailer))
-                trailer = subdivTrailer[0]
+                try:
+                    trailer = subdivTrailer[0]
+                except:
+                    print("Index out range for testing")
+                
+                # trailer = subdivTrailer[0]
 
                 divTitolo = div1.find("div", class_="titolo")
                 for clean_strip in list(divTitolo.stripped_strings):
@@ -132,7 +137,10 @@ class Film:
                 soup = BeautifulSoup(body_text, 'lxml')
                 divTrailer = soup.find_all("a", class_="linkTrailer linkExt")
                 subdivTrailer = re.findall('href="(.*)"', str(divTrailer))
-                trailer = subdivTrailer[0]
+                try:
+                    trailer = subdivTrailer[0]
+                except:
+                    print("Index out range for testing")
 
                 divTitolo = div1.find("div", class_="titolo")
                 for clean_strip in list(divTitolo.stripped_strings):
@@ -159,7 +167,10 @@ class Film:
                 soup = BeautifulSoup(body_text, 'lxml')
                 divTrailer = soup.find_all("a", class_="linkTrailer linkExt")
                 subdivTrailer = re.findall('href="(.*)"', str(divTrailer))
-                trailer = subdivTrailer[0]
+                try:
+                    trailer = subdivTrailer[0]
+                except:
+                    print("Index out range for testing")
 
             divs2 = div.find_all("ul", class_="orari")
             for div2 in divs2:
